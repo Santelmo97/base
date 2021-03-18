@@ -7,7 +7,7 @@ public class TrainControllerImpl implements TrainController  {
 	private int referenceSpeed = 0;
 	private int speedLimit = 0;
 	public referenceSpeedChange runReferenceSpeedChange;
-
+	private boolean run=false;
 	@Override
 	public void followSpeed() {
 		if (referenceSpeed < 0) {
@@ -34,7 +34,6 @@ public class TrainControllerImpl implements TrainController  {
 		enforceSpeedLimit();
 	}
 
-
 	private void enforceSpeedLimit() {
 		if (referenceSpeed > speedLimit) {
 			referenceSpeed = speedLimit;
@@ -46,46 +45,38 @@ public class TrainControllerImpl implements TrainController  {
 		this.step = joystickPosition;
 		if(runReferenceSpeedChange == null){
 			runReferenceSpeedChange = new referenceSpeedChange("Tread1");
-			runReferenceSpeedChange.start();
+			setRun(true);
 		}
 	}
-
+	public void setRun(boolean b) {
+		this.run = b;
+	}
 
 	public class referenceSpeedChange implements Runnable{
-		private Thread t;
+		private Thread joystickThread;
 		private String threadName;
-		private boolean run;
 
 		referenceSpeedChange( String name) {
 			threadName = name;
-			System.out.println("Creating " +  threadName );
+			System.out.println(threadName + "created");
 		}
 		@Override
 		public void run() {
-			run = true;
+			System.out.println(threadName + "started");
+			if (joystickThread == null) {
+				joystickThread = new Thread (this, threadName);
+				joystickThread.start();
+			}
 			try {
 				while (run){
 					followSpeed();
-					System.out.println("Speed set");
-					Thread.sleep(1000); // setting speed every second
+					System.out.println("Joystick input handled");
+					Thread.sleep(1000);
 				}
 			} catch (InterruptedException e){
-				System.out.println("Thread " +  threadName + " interrupted.");
+				System.out.println("Thread interrupted.");
 				Thread.currentThread().interrupt();
 			}
-
-		}
-		public void start(){
-			System.out.println("Starting " +  threadName );
-			if (t == null) {
-				t = new Thread (this, threadName);
-				t.start ();
-			}
-		}
-
-		public void setRun(boolean b) {
-			run =b;
 		}
 	}
-
 }
