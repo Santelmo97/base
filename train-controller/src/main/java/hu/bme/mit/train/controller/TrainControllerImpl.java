@@ -10,7 +10,7 @@ public class TrainControllerImpl implements TrainController {
 	private int step = 5;
 	private int referenceSpeed = 0;
 	private int speedLimit = 0;
-	private boolean run=true;
+	private boolean run=false;
 	public runReferenceSpeedChange referenceSpeedChange;
 
 	@Override
@@ -51,13 +51,14 @@ public class TrainControllerImpl implements TrainController {
 		this.step = joystickPosition;
 		if(referenceSpeedChange==null){
 			referenceSpeedChange=new runReferenceSpeedChange("Thread 1");
+			setRun(true);
 			referenceSpeedChange.run();
 		}
 	}
-	private void setRun(boolean b){
+	public void setRun(boolean b){
 		this.run=b;
 	}
-	private class runReferenceSpeedChange implements Runnable
+	public class runReferenceSpeedChange implements Runnable
 	{
 		private Thread t;
 		private String threadName;
