@@ -49,7 +49,8 @@ public class TrainControllerImpl implements TrainController {
 	@Override
 	public void setJoystickPosition(int joystickPosition) {
 		this.step = joystickPosition;
-		runReferenceSpeedChange();
+		if(!run)
+			runReferenceSpeedChange();
 	}
 	public void setRun(){
 		this.run=!this.run;
