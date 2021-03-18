@@ -12,6 +12,7 @@ public class TrainControllerImpl implements TrainController {
 	private int speedLimit = 0;
 	private Timer timer = new Timer();
 	private boolean run=false;
+
 	@Override
 	public void followSpeed() {
 		if (referenceSpeed < 0) {
@@ -64,7 +65,7 @@ public class TrainControllerImpl implements TrainController {
 			}
 		};
 		while(run){
-			timer.scheduleAtFixedRate(joystickTask,10,2000);
+			timer.scheduleAtFixedRate(joystickTask,0,1000);
 		}
 		timer.cancel();
 		System.out.println("System joystick handling shutdown");
