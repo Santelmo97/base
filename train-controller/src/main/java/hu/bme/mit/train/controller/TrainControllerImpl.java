@@ -44,11 +44,11 @@ public class TrainControllerImpl implements TrainController  {
 	public void setJoystickPosition(int joystickPosition) {
 		this.step = joystickPosition;
 		if(runReferenceSpeedChange == null){
-			runReferenceSpeedChange = new referenceSpeedChange("Tread1");
+			runReferenceSpeedChange = new referenceSpeedChange("Joystick handler thread");
 			setRun(true);
 		}
 	}
-	public void setRun(boolean b) {
+	private void setRun(boolean b) {
 		this.run = b;
 	}
 
