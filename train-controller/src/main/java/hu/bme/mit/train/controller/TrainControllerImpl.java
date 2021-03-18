@@ -10,8 +10,8 @@ public class TrainControllerImpl implements TrainController {
 	private int step = 5;
 	private int referenceSpeed = 0;
 	private int speedLimit = 0;
-	private Timer timer = new Timer();
 	private boolean run=false;
+	public runReferenceSpeedChange referenceSpeedChange;
 
 	@Override
 	public void followSpeed() {
@@ -49,27 +49,40 @@ public class TrainControllerImpl implements TrainController {
 	@Override
 	public void setJoystickPosition(int joystickPosition) {
 		this.step = joystickPosition;
-		if(!run)
-			runReferenceSpeedChange();
+		if(referenceSpeedChange==null){
+			referenceSpeedChange=new runReferenceSpeedChange("Thread 1");
+			referenceSpeedChange.run();
+		}
 	}
 	public void setRun(){
 		this.run=!this.run;
 	}
-	private void runReferenceSpeedChange()
+	public class runReferenceSpeedChange implements Runnable
 	{
-		setRun();
-		TimerTask joystickTask=new TimerTask() {
-			@Override
-			public void run() {
-				followSpeed();
-				System.out.println("Joystick position handled");
-			}
-		};
-		while(run){
-			timer.scheduleAtFixedRate(joystickTask,0,1000);
+		private Thread t;
+		private String threadName;
+
+		runReferenceSpeedChange( String name) {
+			threadName = name;
+			System.out.println(threadName + "created" );
 		}
-		timer.cancel();
-		System.out.println("System joystick handling shutdown");
+		@Override
+		public void run() {
+			if(t==null){
+				t=new Thread(this,threadName);
+				t.start();
+			}
+			try {
+				while (run){
+					followSpeed();
+					System.out.println("Joystick position handled, speed increased");
+					Thread.sleep(1000);
+				}
+			} catch (InterruptedException e){
+				System.out.println("Thread " +  threadName + " interrupted.");
+				Thread.currentThread().interrupt();
+			}
+		}
 
 	}
 }
