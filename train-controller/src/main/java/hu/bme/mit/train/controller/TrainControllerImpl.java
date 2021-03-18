@@ -10,7 +10,7 @@ public class TrainControllerImpl implements TrainController {
 	private int step = 5;
 	private int referenceSpeed = 0;
 	private int speedLimit = 0;
-	private boolean run=false;
+	private boolean run=true;
 	public runReferenceSpeedChange referenceSpeedChange;
 
 	@Override
@@ -54,10 +54,10 @@ public class TrainControllerImpl implements TrainController {
 			referenceSpeedChange.run();
 		}
 	}
-	public void setRun(boolean b){
+	private void setRun(boolean b){
 		this.run=b;
 	}
-	public class runReferenceSpeedChange implements Runnable
+	private class runReferenceSpeedChange implements Runnable
 	{
 		private Thread t;
 		private String threadName;
@@ -68,7 +68,6 @@ public class TrainControllerImpl implements TrainController {
 		}
 		@Override
 		public void run() {
-			setRun(true);
 			if(t==null){
 				t=new Thread(this,threadName);
 				t.start();
@@ -80,7 +79,6 @@ public class TrainControllerImpl implements TrainController {
 					Thread.sleep(1000);
 				}
 			} catch (InterruptedException e){
-				setRun(false);
 				System.out.println("Thread interrupted");
 				Thread.currentThread().interrupt();
 			}
