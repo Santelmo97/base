@@ -3,7 +3,7 @@ package hu.bme.mit.train.controller;
 import hu.bme.mit.train.interfaces.TrainController;
 
 public class TrainControllerImpl implements TrainController  {
-	private int step = 0;
+	private int step = 5;
 	private int referenceSpeed = 0;
 	private int speedLimit = 0;
 	public referenceSpeedChange runReferenceSpeedChange;
@@ -29,7 +29,7 @@ public class TrainControllerImpl implements TrainController  {
 	}
 
 	@Override
-	public void setSpeedLimit(int speedLimit) { // no issues found..
+	public void setSpeedLimit(int speedLimit) {
 		this.speedLimit = speedLimit;
 		enforceSpeedLimit();
 	}
