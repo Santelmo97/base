@@ -2,27 +2,22 @@ package hu.bme.mit.train.controller;
 
 import hu.bme.mit.train.interfaces.TrainController;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class TrainControllerImpl implements TrainController {
-
-	private int step = 5;
+public class TrainControllerImpl implements TrainController  {
+	private int step = 0;
 	private int referenceSpeed = 0;
 	private int speedLimit = 0;
-	private boolean run=false;
-	public runReferenceSpeedChange referenceSpeedChange;
+	public referenceSpeedChange runReferenceSpeedChange;
 
 	@Override
 	public void followSpeed() {
 		if (referenceSpeed < 0) {
 			referenceSpeed = 0;
 		} else {
-		    if(referenceSpeed+step > 0) {
-                referenceSpeed += step;
-            } else {
-		        referenceSpeed = 0;
-            }
+			if(referenceSpeed+step > 0) {
+				referenceSpeed += step;
+			} else {
+				referenceSpeed = 0;
+			}
 		}
 
 		enforceSpeedLimit();
@@ -34,11 +29,11 @@ public class TrainControllerImpl implements TrainController {
 	}
 
 	@Override
-	public void setSpeedLimit(int speedLimit) {
+	public void setSpeedLimit(int speedLimit) { // no issues found..
 		this.speedLimit = speedLimit;
 		enforceSpeedLimit();
-		
 	}
+
 
 	private void enforceSpeedLimit() {
 		if (referenceSpeed > speedLimit) {
@@ -49,41 +44,48 @@ public class TrainControllerImpl implements TrainController {
 	@Override
 	public void setJoystickPosition(int joystickPosition) {
 		this.step = joystickPosition;
-		if(referenceSpeedChange==null){
-			referenceSpeedChange=new runReferenceSpeedChange("Thread 1");
-			setRun(true);
-			referenceSpeedChange.run();
+		if(runReferenceSpeedChange == null){
+			runReferenceSpeedChange = new referenceSpeedChange("Tread1");
+			runReferenceSpeedChange.start();
 		}
 	}
-	public void setRun(boolean b){
-		this.run=b;
-	}
-	public class runReferenceSpeedChange implements Runnable
-	{
+
+
+	public class referenceSpeedChange implements Runnable{
 		private Thread t;
 		private String threadName;
+		private boolean run;
 
-		runReferenceSpeedChange( String name) {
+		referenceSpeedChange( String name) {
 			threadName = name;
-			System.out.println(threadName + "created" );
+			System.out.println("Creating " +  threadName );
 		}
 		@Override
 		public void run() {
-			if(t==null){
-				t=new Thread(this,threadName);
-				t.start();
-			}
+			run = true;
 			try {
 				while (run){
 					followSpeed();
-					System.out.println("Joystick position handled, speed increased");
-					Thread.sleep(1000);
+					System.out.println("Speed set");
+					Thread.sleep(1000); // setting speed every second
 				}
 			} catch (InterruptedException e){
-				System.out.println("Thread interrupted");
+				System.out.println("Thread " +  threadName + " interrupted.");
 				Thread.currentThread().interrupt();
+			}
+
+		}
+		public void start(){
+			System.out.println("Starting " +  threadName );
+			if (t == null) {
+				t = new Thread (this, threadName);
+				t.start ();
 			}
 		}
 
+		public void setRun(boolean b) {
+			run =b;
+		}
 	}
+
 }
