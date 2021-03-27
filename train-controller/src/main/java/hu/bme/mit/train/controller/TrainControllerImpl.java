@@ -11,7 +11,8 @@ public class TrainControllerImpl implements TrainController  {
 	private int speedLimit = 0;
 	public ReferenceSpeedChange runReferenceSpeedChange;
 	private boolean run=false;
-	private static final Logger LOGGER = Logger.getLogger(TrainControllerImpl.class.getName());
+	public static Logger LOGGER = Logger.getLogger(TrainControllerImpl.class.getName());
+
 	@Override
 	public void followSpeed() {
 		if (referenceSpeed < 0) {
