@@ -2,12 +2,16 @@ package hu.bme.mit.train.controller;
 
 import hu.bme.mit.train.interfaces.TrainController;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class TrainControllerImpl implements TrainController  {
 	private int step = 5;
 	private int referenceSpeed = 0;
 	private int speedLimit = 0;
-	public referenceSpeedChange runReferenceSpeedChange;
+	public ReferenceSpeedChange runReferenceSpeedChange;
 	private boolean run=false;
+	private static final Logger LOGGER = Logger.getLogger(TrainControllerImpl.class.getName());
 	@Override
 	public void followSpeed() {
 		if (referenceSpeed < 0) {
@@ -44,7 +48,7 @@ public class TrainControllerImpl implements TrainController  {
 	public void setJoystickPosition(int joystickPosition) {
 		this.step = joystickPosition;
 		if(runReferenceSpeedChange == null){
-			runReferenceSpeedChange = new referenceSpeedChange("Joystick handler thread");
+			runReferenceSpeedChange = new ReferenceSpeedChange("Joystick handler thread");
 			setRun(true);
 		}
 	}
@@ -52,17 +56,17 @@ public class TrainControllerImpl implements TrainController  {
 		this.run = b;
 	}
 
-	public class referenceSpeedChange implements Runnable{
+	public class ReferenceSpeedChange implements Runnable{
 		private Thread joystickThread;
 		private String threadName;
 
-		referenceSpeedChange( String name) {
+		ReferenceSpeedChange(String name) {
 			threadName = name;
-			System.out.println(threadName + "created");
+			LOGGER.log(Level.FINE,"{0} created",threadName);
 		}
 		@Override
 		public void run() {
-			System.out.println(threadName + "started");
+			LOGGER.log(Level.FINE,"{0} started",threadName);
 			if (joystickThread == null) {
 				joystickThread = new Thread (this, threadName);
 				joystickThread.start();
@@ -70,11 +74,11 @@ public class TrainControllerImpl implements TrainController  {
 			try {
 				while (run){
 					followSpeed();
-					System.out.println("Joystick input handled");
+					LOGGER.log(Level.FINE,"Joystick input handled");
 					Thread.sleep(1000);
 				}
 			} catch (InterruptedException e){
-				System.out.println("Thread interrupted.");
+				LOGGER.log(Level.FINE,"Thread interrupted.");
 				Thread.currentThread().interrupt();
 			}
 		}
